@@ -38,12 +38,10 @@ local function main()
             if( not manager.args[i] or not manager.args[i][t] ) then
                coroutine.resume( t )
             else
-               print( "running with args" )
                coroutine.resume( t, table.unpack( manager.args[i][t] ) )
             end
             -- if its complete, remove it
             if( coroutine.status( t ) == "dead" ) then
-               print( "removing dead thread." )
                table.remove( manager.threads[i], ti ) --[ti] = nil
                manager.args[i][t] = nil
             end
