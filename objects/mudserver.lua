@@ -5,8 +5,7 @@ local function acceptNewConnection( server )
       local connection, err = server.socket:accept()
       if( not err ) then
          if( server.accepting == true ) then
-            local client = Client.new( connection )
-            server.connections[(#server.connections)+1] = client
+            table.insert( server.connections, #server.connections+1, Client.new( connection ) )
             connection:send( "You have successfully connected!\n" .. #server.connections )
          else
             connection:close()
@@ -19,8 +18,7 @@ end
 local function readFromClients( server )
    while true do
       for index, client in ipairs( server.connections ) do
-         print( "trying to read from X client" )
-         local input, err = client.connection:receive( '*l' )
+         local input, err = client.connection:receive( "*l" )
          if( not err ) then
             print( input )
          else
