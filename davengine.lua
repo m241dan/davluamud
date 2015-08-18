@@ -22,13 +22,6 @@ print( "Program starting.\n" )
 server = MudServer.new( 6500 )
 server.accepting = true
 
--- add threads
-local res, errmsg = ThreadManager.addThread( 1, server.thread )
-if not res then
-   print( errmsg .. "\n" )
-   return
-end
-
 -- start the manager, which starts the program
 ThreadManager.run()
 

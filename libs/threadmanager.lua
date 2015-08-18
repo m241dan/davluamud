@@ -6,25 +6,26 @@ manager.go = false
 -- threads to manage
 manager.threads = {}
 manager.args = {}
+
 function manager.addThread( priority, thread, ... )
    -- args checks
    if( type( priority ) ~= "number" ) then
-      return nil, "priority must be integer"
+      error( "priority must be integer", 2 )
    end
    if( priority ~= 1 and manager.threads[priority-1] == nil ) then
-      return nil, "priority must be in 1-n sequential order. for example: cannot add priority 3 if 2 does not exist."
+      error( "priority must be in 1-n sequential order. for example: cannot add priority 3 if 2 does not exist.", 2 )
    end 
    if( type( thread ) ~= "thread" ) then
-      return nil, "thread must be of type... thread!"
+      error( "thread must be of type... thread!", 2 )
    end
-
+ 
    -- insert thread into proper table or create table
    if( manager.threads[priority] ~= nil ) then
       table.insert( manager.threads[priority], thread )
       manager.args[priority][thread] = { ... }
    else
       manager.threads[priority] = { thread }
-      manager.args[priority] = { thread = { ... } }
+      manager.args[priority] = { [thread] = { ... } }
    end
    return true
 end
