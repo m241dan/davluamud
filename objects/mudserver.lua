@@ -11,12 +11,11 @@ local function new( port )
    server.accepting = false
 
    server.thread = coroutine.create( function()
-      print( "starting server thread" )
       while true do
          local connection = server.socket:accept()
          if( connection ~= nil ) then
             if( server.accepting == true ) then
-               table.insert( server.connections, connection )
+               table.insert( server.connections, Client.new( connection ) )
                connection:send( "You have successfully connected!\n" )
             else
                connection:close()

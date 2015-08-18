@@ -12,8 +12,9 @@
 -- boot game server(game logic)
 
 
-ThreadManager = require( "threadmanager" )
-MudServer = require( "mudserver" )
+ThreadManager = require( "libs/threadmanager" )
+MudServer = require( "objects/mudserver" )
+Client = require( "objects/client" )
 
 print( "Program starting.\n" )
 

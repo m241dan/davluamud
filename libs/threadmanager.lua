@@ -22,7 +22,6 @@ function manager.addThread( priority, thread )
    if( manager.threads[priority] ~= nil ) then
       table.insert( manager.threads[priority], thread )
    else
-      print( "thread added to table.\n" )
       manager.threads[priority] = { thread }
    end
    return true
