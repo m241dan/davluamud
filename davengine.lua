@@ -10,3 +10,7 @@
 -- boot mud server
 -- boot database
 -- boot game server(game logic)
+
+ThreadManager = require( "threadmanager" )
+
+
