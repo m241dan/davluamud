@@ -15,7 +15,9 @@ local function new( port )
          local connection = server.socket:accept()
          if( connection ~= nil ) then
             if( server.accepting == true ) then
+               print( "just before table.insert" )
                table.insert( server.connections, Client.new( connection ) )
+               print( "New client called." )
                connection:send( "You have successfully connected!\n" )
             else
                connection:close()

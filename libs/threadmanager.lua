@@ -5,8 +5,8 @@ manager.go = false
 
 -- threads to manage
 manager.threads = {}
-
-function manager.addThread( priority, thread )
+manager.args = {}
+function manager.addThread( priority, thread, ... )
    -- args checks
    if( type( priority ) ~= "number" ) then
       return nil, "priority must be integer"
@@ -21,8 +21,10 @@ function manager.addThread( priority, thread )
    -- insert thread into proper table or create table
    if( manager.threads[priority] ~= nil ) then
       table.insert( manager.threads[priority], thread )
+      manager.args[priority][thread] = { ... }
    else
       manager.threads[priority] = { thread }
+      manager.args[priority] = { thread = { ... } }
    end
    return true
 end
@@ -31,12 +33,17 @@ local function main()
    -- program main loop
    while manager.go == true do
       -- iterate through both thread tables
-      for i, p in ipairs( manager.threads ) do
+      for i = 1, #manager.threads do
          for ti, t in pairs( manager.threads[i] ) do
-            coroutine.resume( t )
+            if( not manager.args[i] or not manager.args[i][t] ) then
+               coroutine.resume( t )
+            else
+               coroutine.resume( t, table.unpack( manager.args[i][t] ) )
+            end
             -- if its complete, remove it
             if( coroutine.status( t ) == "dead" ) then
                table.remove( manager.threads[i], ti )
+               manager.args[i][t] = nil
             end
          end
       end
