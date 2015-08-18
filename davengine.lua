@@ -11,24 +11,25 @@
 -- boot database
 -- boot game server(game logic)
 
-print( "Program starting.\n" )
 
 ThreadManager = require( "threadmanager" )
 MudServer = require( "mudserver" )
 
+print( "Program starting.\n" )
+
+-- create threads
 server = MudServer.new( 6500 )
-print( "Creating new server.\n" )
 server.accepting = true
 
-print( "adding thread\n" )
-
+-- add threads
 local res, errmsg = ThreadManager.addThread( 1, server.thread )
 if not res then
    print( errmsg .. "\n" )
    return
 end
 
-print( "thread added.\n" )
+-- start the manager, which starts the program
 ThreadManager.run()
 
+-- gracefully exit?
 print( "Program exiting.\n" )
