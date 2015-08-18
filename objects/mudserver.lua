@@ -5,7 +5,8 @@ local function acceptNewConnection( server )
       local connection, err = server.socket:accept()
       if( not err ) then
          if( server.accepting == true ) then
-            server.connections[(#server.connections+1)] = Client.new( connection )
+            local client = Client.new( connection )
+            server.connections[(#server.connections)+1] = client
             connection:send( "You have successfully connected!\n" .. #server.connections )
          else
             connection:close()
