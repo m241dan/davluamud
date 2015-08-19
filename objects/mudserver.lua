@@ -18,15 +18,9 @@ end
 
 local function readFromClients( server )
    while true do
-      for index, client in ipairs( server.connections ) do
-         local input, err = client.connection:read( "*l" )
-         if( not err ) then
-            print( input )
-         else
-            if( err == 'closed' ) then
-               table.remove( server.connections, index )
-               client:close()
-            end
+      for con in server.socket:clients(0) do
+         for ln in con:lines( "*l" ) do
+            con:write( ln )
          end
       end
       coroutine.yield()
