@@ -6,7 +6,7 @@ local function acceptNewConnection( server )
       if( not err ) then
          if( server.accepting == true ) then
             table.insert( server.connections, #server.connections+1, Client.new( connection ) )
-            connection:send( "You have successfully connected!\n" .. #server.connections )
+            connection:send( "You have successfully connected!\n" )
          else
             connection:close()
          end
@@ -18,13 +18,15 @@ end
 local function readFromClients( server )
    while true do
       for index, client in ipairs( server.connections ) do
-         local input, err = client.connection:receive( "*l" )
+         local input, err, partial = client.connection:receive( "*l" )
          if( not err ) then
             print( input )
          else
             if( err == 'closed' ) then
                table.remove( server.connections, index )
                client:close()
+            else
+               print( "err" )
             end
          end
       end
