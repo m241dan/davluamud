@@ -2,7 +2,7 @@ local C = {}
 
 local function getClientIP( client )
    while client.addr == nil do
-      client.addr, client.port, client.net = client.connection:getsockname()
+      client.addr, client.port, client.net = assert( client.connection:peername() )
       coroutine.yield()
    end
 end

@@ -1,4 +1,5 @@
-local socket = require( "socket" )
+local cqueues = require( "cqueues" )
+local socket = require( "cqueues.socket" )
 
 local function acceptNewConnection( server )
    while true do
@@ -6,7 +7,7 @@ local function acceptNewConnection( server )
       if( not err ) then
          if( server.accepting == true ) then
             table.insert( server.connections, #server.connections+1, Client.new( connection ) )
-            connection:send( "You have successfully connected!\n" .. #server.connections )
+            connection:send( "You have successfully connected!\n", 1, 33 )
          else
             connection:close()
          end
@@ -18,7 +19,7 @@ end
 local function readFromClients( server )
    while true do
       for index, client in ipairs( server.connections ) do
-         local input, err = client.connection:receive( "*l" )
+         local input, err = client.connection:read( "*l" )
          if( not err ) then
             print( input )
          else
@@ -32,12 +33,9 @@ local function readFromClients( server )
    end
 end
 
-local function new( port )
+local function new( portarg )
    local server = {}
-   server.socket = assert( socket.tcp(), "could not allocate new tcp socket" )
-   assert( server.socket:bind( "*", port ), "could not bind to port" )
-   server.socket:listen()
-   server.socket:setoption( 'reuseaddr', true )
+   server.socket = socket.listen{ host="localhost", port=portarg, family=AF_INET, type=SOCK_STEAM, reuseaddr=true }
    server.socket:settimeout(0)
    server.connections = {}
    server.accepting = false

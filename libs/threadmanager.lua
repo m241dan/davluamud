@@ -37,9 +37,9 @@ local function main()
       for i = 1, #manager.threads do
          for ti, t in pairs( manager.threads[i] ) do
             if( not manager.args[i] or not manager.args[i][t] ) then
-               coroutine.resume( t )
+               assert( coroutine.resume( t ) )
             else
-               coroutine.resume( t, table.unpack( manager.args[i][t] ) )
+               assert( coroutine.resume( t, table.unpack( manager.args[i][t] ) ) )
             end
             -- if its complete, remove it
             if( coroutine.status( t ) == "dead" ) then
