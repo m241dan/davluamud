@@ -1,4 +1,6 @@
-function init( client )
+local B = {}
+
+function B.init( client )
    client.state.outbuf[1] = [[
 
   _____                              _
@@ -10,5 +12,9 @@ function init( client )
                                 __/ |
                                |___/
 
-                "Remember that you will die."\n]]
+                "Remember that you will die."
+What is your name? ]]
+   return true -- so as not to fuck up the assert
 end
+
+return B

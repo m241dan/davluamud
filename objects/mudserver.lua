@@ -5,13 +5,12 @@ local function acceptNewConnection( server )
       local connection, err = server.socket:accept()
       if( not err ) then
          if( server.accepting == true ) then
-            table.insert( server.connections, #server.connections+1, Client.new( connection ) )
+            local client = Client.new( connection )
+            table.insert( server.connections, #server.connections+1, client )
             connection:send( "You have successfully connected!\n" )
             client.states[1] = { name = "Login", inbuf = {}, outbuf = {}, behaviour = require( "behaviours/login" ) }
-            if( not client.states[1].behaviour.init ) then
-               error( "client behaviour missing init function", 2 )
-            end
             client.state = client.states[1]
+            assert( client.state.behaviour.init( client ), "client behaviour missing init method" )
          else
             connection:close()
          end
@@ -43,6 +42,7 @@ local function flushOutput( server )
          for _, output in pairs( client.state.outbuf ) do
             client.connection:send( output )
          end
+         client.state.outbuf = {}
       end
       coroutine.yield()
    end

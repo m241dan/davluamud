@@ -10,8 +10,6 @@
 -- boot mud server
 -- boot database
 -- boot game server(game logic)
-
-
 ThreadManager = require( "libs/threadmanager" )
 MudServer = require( "objects/mudserver" )
 Client = require( "objects/client" )
