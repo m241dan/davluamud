@@ -7,6 +7,11 @@ local function acceptNewConnection( server )
          if( server.accepting == true ) then
             table.insert( server.connections, #server.connections+1, Client.new( connection ) )
             connection:send( "You have successfully connected!\n" )
+            client.states[1] = { name = "Login", inbuf = {}, outbuf = {}, behaviour = require( "behaviours/login" ) }
+            if( not client.states[1].behaviour.init ) then
+               error( "client behaviour missing init function", 2 )
+            end
+            client.state = client.states[1]
          else
             connection:close()
          end
@@ -25,9 +30,18 @@ local function readFromClients( server )
             if( err == 'closed' ) then
                table.remove( server.connections, index )
                client:close()
-            else
-               print( "err" )
             end
+         end
+      end
+      coroutine.yield()
+   end
+end
+
+local function flushOutput( server )
+   while true do
+      for index, client in ipairs( server.connections ) do
+         for _, output in pairs( client.state.outbuf ) do
+            client.connection:send( output )
          end
       end
       coroutine.yield()
@@ -46,6 +60,7 @@ local function new( port )
 
    ThreadManager.addThread( 1, coroutine.create( acceptNewConnection ), server )
    ThreadManager.addThread( 2, coroutine.create( readFromClients ), server )
+   ThreadManager.addThread( 3, coroutine.create( flushOutput ), server )
    return server;
 end
 
