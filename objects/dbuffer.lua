@@ -28,7 +28,7 @@ end
 function B:parse( str )
    local str = str:gsub( '\r\n', '\n' )
    local str = str:gsub( '\n\r', '\n' )
-   local substr, i, c, aw, lastspace = nil, 1, 0, self.width, 0
+   local i, c, aw, lastspace = 1, 0, self.width, 0
    local t = {}
    str:gsub( ".", function( c ) table.insert( t, #t+1, c ); end )
 
@@ -62,11 +62,10 @@ function B:parse( str )
                t[lastspace] = '\n'
                i = lastspace + 1
             else
-               print( "getting here" )
                table.insert( t, i+1, '\n' )
                i = i + 2
             end
-            c = 0
+            c = 1
             aw = self.width
             lastspace = 0
          end
