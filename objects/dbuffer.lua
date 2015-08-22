@@ -76,10 +76,7 @@ function B:parse( str )
       t[i] = '\n'
    end
 
-   for _, v in pairs( t ) do
-      io.write( v )
-   end
-
+   print( table.concat( t, "" ) )
    return true
 end
 
