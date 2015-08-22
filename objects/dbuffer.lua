@@ -28,44 +28,54 @@ end
 function B:parse( str )
    local str = str:gsub( '\r\n', '\n' )
    local str = str:gsub( '\n\r', '\n' )
-   local substr
+   local substr, i, c, aw, lastspace = nil, 1, 0, self.width, 0
    local t = {}
    str:gsub( ".", function( c ) table.insert( t, #t+1, c ); end )
-   local s, i, e, nl = 1, nil, nil, false
 
-   substr = getsubstr_color( str:sub( s ), self.width, 0 ) -- get the length of a str with color codes
-   e = #substr
    repeat
-      print( "substr " .. substr )
-      i = s
-      repeat
+      ::parsestart::
+      if( t[i] == '#' ) then -- test for color, if color expand c by two but also expand our artificial width by two, inc by two
+         i = i + 2
+         aw = aw + 2 
+         c = c + 2
+         goto parsestart
+      elseif( t[i] == '\n' ) then -- if nl, reset our count and aw to start,inc by 1
+         c = 0
+         aw = self.width
          i = i + 1
-      until( t[i] == '/n' or i == e or t[i] == nil ) -- iterate until we find a nl or the end
-
-      if( t[i] == nil ) then
-         goto test
+         goto parsestart
       end
 
+      if( t[i] == ' ' ) then -- record where our last space was, for when we have to back it up to prevent line truncation
+         lastspace = i
+      end
+      i = i + 1
+      c = c + 1
 
-      e = i -- set new "ending"
-      print( "t[i] " .. t[i] )
-      if( t[i] ~= ' ' and t[i] ~= '\n' ) then -- back up until we hit a character
-         repeat
-            i = i - 1
-         until t[i] == ' ' or i == s
-         if( t == s ) then
-           i = e 
+      if( c == aw ) then
+         if( t[i] == ' ' ) then
+            t[i] = '\n'
+            c = 0
+            goto parsestart
+         else
+            if( lastspace > i - aw ) then
+               t[lastspace] = '\n'
+               i = lastspace + 1
+            else
+               table.insert( t, i+1, "\n" )
+               i = i + 2
+            end
+            c = 0
+            aw = self.width
+            lastspace = 0
          end
       end
-      ::test::
-      local insertstr = str:sub( s, i ):gsub( "\n", "" )
-      print( insertstr )
-      table.insert( self.lines, #self.lines+1, insertstr )
-      i = i + 1
-      s = i
-      substr = getsubstr_color( str:sub( s ), self.width, 0 ) -- get the length of a str with color codes
-      e = #substr + s
-   until t[s] == nil
+   until not t[i]
+
+   if( t[i-1] ~= '\n') then
+      t[i] = '\n'
+   end
+
    return true
 end
 
