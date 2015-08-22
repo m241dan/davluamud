@@ -62,7 +62,8 @@ function B:parse( str )
                t[lastspace] = '\n'
                i = lastspace + 1
             else
-               table.insert( t, i+1, "\n" )
+               print( "getting here" )
+               table.insert( t, i+1, '\n' )
                i = i + 2
             end
             c = 0
@@ -74,6 +75,10 @@ function B:parse( str )
 
    if( t[i-1] ~= '\n') then
       t[i] = '\n'
+   end
+
+   for _, v in pairs( t ) do
+      io.write( v )
    end
 
    return true
