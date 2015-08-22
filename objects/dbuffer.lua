@@ -76,7 +76,9 @@ function B:parse( str )
       t[i] = '\n'
    end
 
-   print( table.concat( t, "" ) )
+   
+   local newstr = table.concat( t, "" )
+   newstr:gsub( "(.*)\n", function( ln ) table.insert( self.lines, #self.lines+1, ln ); end )
    return true
 end
 
