@@ -5,12 +5,12 @@ local function acceptNewConnection( server )
       local connection, err = server.socket:accept()
       if( not err ) then
          if( server.accepting == true ) then
-            local client = Client.new( connection )
+            local client = Client:new( connection )
             table.insert( server.connections, #server.connections+1, client )
             connection:send( "You have successfully connected!\n" )
             client.states[1] = { name = "Login", inbuf = {}, outbuf = {}, behaviour = require( "behaviours/login" ) }
             client.state = client.states[1]
-            assert( client.state.behaviour.init( client ), "client behaviour missing init method" )
+            assert( client.state.behaviour.init( client ) )
          else
             connection:close()
          end

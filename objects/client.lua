@@ -7,8 +7,12 @@ local function getClientIP( client )
    end
 end
 
-function C.new( connect )
+function C:new( connect )
    local client = {}
+
+   setmetatable( client, self )
+   self.__index = self
+
    -- setup basic client info
    client.connection = connect
    client.connection:settimeout(0) -- don't block, you either have something or you don't!
@@ -16,5 +20,9 @@ function C.new( connect )
    ThreadManager.addThread( 1, coroutine.create( getClientIP ), nil, client )
    return client;
 end
+
+
+
+C.location = "objects/client"
 
 return C
