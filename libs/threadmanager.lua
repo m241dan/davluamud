@@ -4,10 +4,11 @@ local manager = {}
 manager.go = false
 
 -- threads to manage
-manager.threads = {}
-manager.args = {}
+manager.threads = {} -- coroutines
+manager.args = {} -- their resume args
+manager.reactions = {} -- what to do with anything they yield
 
-function manager.addThread( priority, thread, ... )
+function manager.addThread( priority, thread, rfunc, ... )
    -- args checks
    if( type( priority ) ~= "number" ) then
       error( "priority must be integer", 2 )
@@ -23,9 +24,15 @@ function manager.addThread( priority, thread, ... )
    if( manager.threads[priority] ~= nil ) then
       table.insert( manager.threads[priority], thread )
       manager.args[priority][thread] = { ... }
+      if( rfunc ) then 
+         manager.reactions[priority][thread] = rfunc
+      end
    else
       manager.threads[priority] = { thread }
       manager.args[priority] = { [thread] = { ... } }
+      if( rfunc ) then
+         manager.reactions[priority] = { [thread] = rfunc }
+      end
    end
    return true
 end
@@ -33,13 +40,20 @@ end
 local function main()
    -- program main loop
    while manager.go == true do
+      local rfunc_params
       -- iterate through both thread tables
       for i = 1, #manager.threads do
          for ti, t in pairs( manager.threads[i] ) do
             if( not manager.args[i] or not manager.args[i][t] ) then
-               assert( coroutine.resume( t ) )
+               rfunc_params = assert( coroutine.resume( t ) )
+               if( rfunc_params and type( rfunc_params ) == "table" ) then 
+                  manager.reactions[i][t]( table.unpack( rfunc_params ) )
+               end
             else
-               assert( coroutine.resume( t, table.unpack( manager.args[i][t] ) ) )
+               rfunc_params = assert( coroutine.resume( t, table.unpack( manager.args[i][t] ) ) )
+               if( rfunc_params and type( rfunc_params ) == "table" ) then
+                  manager.reactions[i][t]( table.unpack( rfunc_params ) )
+               end
             end
             -- if its complete, remove it
             if( coroutine.status( t ) == "dead" ) then

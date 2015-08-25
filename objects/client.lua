@@ -13,7 +13,7 @@ function C.new( connect )
    client.connection = connect
    client.connection:settimeout(0) -- don't block, you either have something or you don't!
    client.states = {}
-   ThreadManager.addThread( 1, coroutine.create( getClientIP ), client )
+   ThreadManager.addThread( 1, coroutine.create( getClientIP ), nil, client )
    return client;
 end
 

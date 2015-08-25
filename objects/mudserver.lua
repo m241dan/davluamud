@@ -58,9 +58,9 @@ local function new( port )
    server.connections = {}
    server.accepting = false
 
-   ThreadManager.addThread( 1, coroutine.create( acceptNewConnection ), server )
-   ThreadManager.addThread( 2, coroutine.create( readFromClients ), server )
-   ThreadManager.addThread( 3, coroutine.create( flushOutput ), server )
+   ThreadManager.addThread( 1, coroutine.create( acceptNewConnection ), nil, server )
+   ThreadManager.addThread( 2, coroutine.create( readFromClients ), nil, server )
+   ThreadManager.addThread( 3, coroutine.create( flushOutput ), nil, server )
    return server;
 end
 
