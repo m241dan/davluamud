@@ -10,6 +10,8 @@
 -- boot mud server
 -- boot database
 -- boot game server(game logic)
+package.cpath = "/home/korisd/mudstuff/davluamud/libs/?.so"
+Time = require( "time" )
 ThreadManager = require( "libs/threadmanager" )
 MudServer = require( "libs/mudserver" )
 Client = require( "objects/client" )
