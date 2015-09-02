@@ -56,7 +56,7 @@ function EQ.insertSort( event, index )
       else
          print( "index is " .. index )
          print( "queue size is " .. #EQ.queue )
-         next = math.floor( ( #EQ.queue - index ) / 2 ) + 1
+         next = math.floor( #EQ.queue - index ) + index
          return EQ.insertSort( event, next )
       end
    else

@@ -8,9 +8,9 @@ c = Event:new( nil )
 a.name = "a"
 a.execute_at = EventQueue.time() + 100
 b.name = "b"
-b.execute_at = EventQueue.time() + 200
+b.execute_at = EventQueue.time() + 300
 c.name = "c"
-c.execute_at = EventQueue.time() + 300
+c.execute_at = EventQueue.time() + 200
 
 EventQueue.insert( a )
 EventQueue.insert( b )
