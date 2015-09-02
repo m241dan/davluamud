@@ -120,6 +120,9 @@ function EQ.main()
             _, requeue_at = assert( coroutine.resume( CEvent.routine, table.unpack( CEvent.args ) ) )
          end
          table.remove( EQ.queue, 1 ) 
+         print( CEvent.name )
+         print( EQ.time() )
+         print( "Size of Event Queue = " .. #EQ.queue )
          if( coroutine.status( CEvent.routine ) == "dead" or type( requeue_at ) ~= "number" ) then
             print( "removing event with dead thread." )
             CEvent.is_queued = false

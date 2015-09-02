@@ -15,13 +15,16 @@ function B.init( state )
 
                 "Remember that you will die."
 What is your name? ]] )
+   print( state.outbuf[1] )
    return true -- so as not to fuck up the assert
 end
 
 function B.output( state )
    while true do
       for _, output in pairs( state.outbuf ) do
-         state.clients[1].connection:send( output )
+         print( "What the heck???" )
+         assert( state.clients[1].connection:send( output ) )
+         print( "Somethign is wrong." )
       end
       coroutine.yield( nil )
    end
@@ -36,8 +39,11 @@ end
 function B.msg( state, input )
    table.insert( state.outbuf, #state.outbuf + 1, input )
    if( not state.outbuf_event.is_queued ) then
+      print( "queueing the outbuf event @ " .. EventQueue.time() .. " for " .. EventQueue.time() + EventQueue.default_tick )
+    
       state.outbuf_event.execute_at = EventQueue.time() + EventQueue.default_tick
       EventQueue.insert( state.outbuf_event )
+      print( "Event Queue size = " .. #EventQueue.queue )
    end
 end
 

@@ -92,7 +92,7 @@ function C.state:new( name, behaviour )
    state.outbuf = {}
    state.outbuf_event = EventQueue.event:new( coroutine.create( state.behaviour.output ) )
    state.outbuf_event:args( state )
-
+   state.outbuf_event.name = "Output"
    return state
 end
 
