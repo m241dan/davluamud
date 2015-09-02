@@ -43,7 +43,7 @@ function EQ.insertSort( event, index )
       -- what to do if the current execute time is less than the event at this index
       if( index == 1 ) then
          table.insert( EQ.queue, 1, event ) -- we're at the bottom of the array, insert it
-      elseif( event.execute_at > EQ.queue[index - 1].execute_at ) then
+      elseif( event.execute_at >= EQ.queue[index - 1].execute_at ) then
          table.insert( EQ.queue, index, event ) -- this event is less than the index but greater than the index -1, insert it at the index
       else
          next = math.floor( index / 2 )
@@ -51,11 +51,9 @@ function EQ.insertSort( event, index )
       end
    elseif( event.execute_at > EQ.queue[index].execute_at ) then
       -- what to do if the current execute timeis greater than the event at thisindex
-      if( not EQ.queue[index + 1] or event.execute_at < EQ.queue[index + 1].execute_at ) then
+      if( not EQ.queue[index + 1] or event.execute_at <= EQ.queue[index + 1].execute_at ) then
          table.insert( EQ.queue, index + 1, event ) -- we're at the top of array, insert it there or we're less than index +1, either way, insert at index+1
       else
-         print( "index is " .. index )
-         print( "queue size is " .. #EQ.queue )
          next = math.floor( #EQ.queue - index ) + index
          return EQ.insertSort( event, next )
       end
@@ -79,6 +77,7 @@ function EQ.main()
    while EQ.running do
       if( not EQ.queue[1] ) then -- should never have an empty queue, but if we do, its time to end
          print( "Program Exiting, nothing in Queue." )
+         return false
       end
 
       local CEvent = EQ.queue[1]
