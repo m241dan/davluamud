@@ -1,4 +1,6 @@
 local socket = require( "socket" )
+-- cpath needs to be adjusted if you don't want to install the module directly on the computer
+-- and I don't, so, I do
 package.cpath = "/home/korisd/davluamud/libs/?.so"
 local Time = require( "time" )
 -- .getMiliseconds()
@@ -6,7 +8,13 @@ local Time = require( "time" )
 -- .getTime()
 -- .getDiff()
 -- .getSeconds()
+
 local EQ = {}
+
+----------------------------------------------
+-- EventQueue Library Constants and Globals --
+-- Written by Daniel R. Koris(aka Davenge)  --
+----------------------------------------------
 
 EQ.queue = {}
 EQ.running = false
@@ -14,7 +22,11 @@ EQ.default_tick = 250 -- 250 = .25 seconds || 250 milliseconds
 
 EQ.event = {}
 
---event functions
+---------------------------------------------
+-- EventQueue.event Methods                --
+-- Written by Daniel R. Koris(aka Davenge) --
+---------------------------------------------
+
 function EQ.event:new( thread )
    local event = {}
 
@@ -29,6 +41,11 @@ end
 function EQ.event:args( ... )
    self.args = { ... }
 end
+
+---------------------------------------------
+-- EventQueue Library Functions            --
+-- Written by Daniel R. Koris(aka Davenge) --
+---------------------------------------------
 
 --queue functions
 

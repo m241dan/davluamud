@@ -2,6 +2,11 @@ local socket = require( "socket" )
 
 local S = {}
 
+---------------------------------------------
+-- Server Coroutines                       --
+-- Written by Daniel R. Koris(aka Davenge) --
+---------------------------------------------
+
 local function acceptNewConnection( server )
    while true do
       local connection, err = server.socket:accept()
@@ -32,6 +37,11 @@ local function readFromClients( server )
       coroutine.yield( EventQueue.default_tick ) -- every quarter of a second to read from clients should be fine, can be adjusted if it feels sluggish
    end
 end
+
+---------------------------------------------
+-- Server Methods                          --
+-- Written by Daniel R. Koris(aka Davenge) --
+---------------------------------------------
 
 function S:new( port )
    local server = {}

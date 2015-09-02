@@ -1,18 +1,18 @@
 local B = {}
 
+---------------------------------------------
+-- Davenge Buffer Constants and Globals    --
+-- Written by Daniel R. Koris(aka Davenge) --
+---------------------------------------------
+
 TOP_FAVOR = 1
 BOT_FAVOR = 2
 MID_FAVOR = 3
 
-function B:new( width )
-   local buffer = {}
-   setmetatable( buffer, self )
-   self.__index = self
-   buffer.width = width;
-   buffer.lines = {}
-   buffer.favor = TOP_FAVOR
-   return buffer
-end
+---------------------------------------------
+-- Davenge Buffer Helper Methods           --
+-- Written by Daniel R. Koris(aka Davenge) --
+---------------------------------------------
 
 -- get substring at desired length, take into account colors and expand until we get the false length created by the color tags
 local function getsubstr_color( str, length, ecc ) -- ecc expected color count
@@ -23,6 +23,23 @@ local function getsubstr_color( str, length, ecc ) -- ecc expected color count
       return getsubstr_color( str, ( length + cc * 2 ) - 1, cc )
    end
    return substr
+end
+
+
+
+---------------------------------------------
+-- Davenge Buffer Methods                  --
+-- Written by Daniel R. Koris(aka Davenge) --
+---------------------------------------------
+
+function B:new( width )
+   local buffer = {}
+   setmetatable( buffer, self )
+   self.__index = self
+   buffer.width = width;
+   buffer.lines = {}
+   buffer.favor = TOP_FAVOR
+   return buffer
 end
 
 function B:parse( str )

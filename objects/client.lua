@@ -2,8 +2,18 @@ local Buffer = require( "objects/dbuffer" )
 
 local C = {}
 
+---------------------------------------------
+-- Client Constants and Globals            --
+-- Written by Daniel R. Koris(aka Davenge) --
+---------------------------------------------
+
 C.location = "objects/client"
 C.flush_rate = 1000 -- 1000 milliseconds or... one second :P if this feels sluggish, can easilly increase
+
+---------------------------------------------
+-- Client Coroutines                       --
+-- Written by Daniel R. Koris(aka Davenge) --
+---------------------------------------------
 
 local function getClientIP( client )
    while client.addr == nil do
@@ -11,6 +21,11 @@ local function getClientIP( client )
       coroutine.yield()
    end
 end
+
+----------------------------------------------
+-- Client methods                           --
+-- Written by Daniel R. Koris(aka Davenge)  --
+----------------------------------------------
 
 function C:new( connect )
    local client = {}
@@ -26,19 +41,6 @@ function C:new( connect )
    event:args( client )
    EventQueue.insert( event )
    return client;
-end
-
-function C.state:new( name, behaviour )
-   local state = {}
-
-   setmetatable( state, self )
-   self.__index = self
-
-   state.name = name
-   state.behaviour = require( behaviour )
-   state.inbuf = {}
-   state.outbuf = { Buffer:new( 70 ) }
-   assert( state.behaviour.init( client, state ) )
 end
 
 function C:addState( state )
@@ -67,6 +69,23 @@ function C:setState( sori )
    return true
 end
 
-function 
+---------------------------------------------
+-- Client.state Methods                    --
+-- Written by Daniel R. Koris(aka Davenge) --
+---------------------------------------------
+
+function C.state:new( name, behaviour )
+   local state = {}
+
+   setmetatable( state, self )
+   self.__index = self
+
+   state.name = name
+   state.behaviour = require( behaviour )
+   state.inbuf = {}
+   state.outbuf = { Buffer:new( 70 ) }
+   assert( state.behaviour.init( client, state ) )
+end
+
 
 return C
