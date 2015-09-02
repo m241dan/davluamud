@@ -10,7 +10,6 @@
 -- boot mud server
 -- boot database
 -- boot game server(game logic)
-package.cpath = "/home/korisd/davluamud/libs/?.so"
 EventQueue = require( "libs/eventqueue" )
 
 print( os.time() )

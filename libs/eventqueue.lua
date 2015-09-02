@@ -1,3 +1,4 @@
+package.cpath = "/home/korisd/davluamud/libs/?.so"
 local Time = require( "time" )
 -- .getMiliseconds()
 -- .getMicroSeconds()
@@ -32,6 +33,45 @@ end
 
 function EQ.time()
    return ( Time.getMiliseconds() * 1000 )
+end
+
+function EQ.insertSort( event, index )
+   local next
+   if( index < 1 ) then index = 1; end -- precautionary check
+
+   if( event.execute_at < EQ.queue[index].execute_at ) then
+      -- what to do if the current execute time is less than the event at this index
+      if( index == 1 ) then
+         table.insert( EQ.queue, 1, event ) -- we're at the bottom of the array, insert it
+      elseif( event.execute_at > EQ.queue[index - 1].execute_at ) then
+         table.insert( EQ.queue, index, event ) -- this event is less than the index but greater than the index -1, insert it at the index
+      else
+         next = math.floor( index / 2 )
+         return EQ.insertSort( event, next )
+      end
+   elseif( event.execute_at > EQ.queue[index].execute_at ) then
+      -- what to do if the current execute timeis greater than the event at thisindex
+      if( not EQ.queue[index + 1] or event.execute_at < EQ.queue[index + 1].execute_at ) then
+         table.insert( EQ.queue, index + 1, event ) -- we're at the top of array, insert it there or we're less than index +1, either way, insert at index+1
+      else
+         print( "index is " .. index )
+         print( "queue size is " .. #EQ.queue )
+         next = math.floor( ( #EQ.queue - index ) / 2 ) + 1
+         return EQ.insertSort( event, next )
+      end
+   else
+      table.insert( EQ.queue, index, event ) -- if its to be executed at the same time(which is unlikely) you can just stick it in the same place )
+   end
+   return true
+end
+
+function EQ.insert( event )
+   -- if there's nothing in the queue, it's the first, duh!
+   if( not EQ.queue[1] ) then
+      EQ.queue[1] = event
+   end
+   print( "doing an insert" )
+   EQ.insertSort( event, math.floor( #EQ.queue / 2 ) )
 end
 
 function EQ.main()
