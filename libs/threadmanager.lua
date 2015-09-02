@@ -40,29 +40,6 @@ end
 local function main()
    -- program main loop
    while manager.go == true do
-      local rfunc_params
-      -- iterate through both thread tables
-      for i = 1, #manager.threads do
-         for ti, t in pairs( manager.threads[i] ) do
-            if( not manager.args[i] or not manager.args[i][t] ) then
-               rfunc_params = assert( coroutine.resume( t ) )
-               if( rfunc_params and type( rfunc_params ) == "table" ) then 
-                  manager.reactions[i][t]( table.unpack( rfunc_params ) )
-               end
-            else
-               rfunc_params = assert( coroutine.resume( t, table.unpack( manager.args[i][t] ) ) )
-               if( rfunc_params and type( rfunc_params ) == "table" ) then
-                  manager.reactions[i][t]( table.unpack( rfunc_params ) )
-               end
-            end
-            -- if its complete, remove it
-            if( coroutine.status( t ) == "dead" ) then
-               print( "removing dead thread." )
-               table.remove( manager.threads[i], ti ) --[ti] = nil
-               manager.args[i][t] = nil
-            end
-         end
-      end
    end
 end
 
