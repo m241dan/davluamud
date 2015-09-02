@@ -11,20 +11,19 @@
 -- boot database
 -- boot game server(game logic)
 EventQueue = require( "libs/eventqueue" )
-
-print( os.time() )
-milliseconds = EventQueue.time()
-print( milliseconds )
-print( milliseconds % 1000 )
-
 MudServer = require( "objects/server" )
-Client = require( "objects/client" )
 
 print( "Program starting.\n" )
 
 -- create threads
+local server = MudServer:new( 6500 )
+local event_server_accepting = EventQueue.event:new( server:start() )
 
--- start the manager, which starts the program
+event_server_accepting:args( server )
+EventQueue.insert( event_server_accepting )
+
+-- start the EventQueue, which starts the program
+EventQueue.run()
 
 -- gracefully exit?
 print( "Program exiting.\n" )

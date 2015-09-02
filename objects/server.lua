@@ -7,17 +7,12 @@ local function acceptNewConnection( server )
       local connection, err = server.socket:accept()
       if( not err ) then
          if( server.accepting == true ) then
-            local client = Client:new( connection )
-            table.insert( server.connections, #server.connections+1, client )
             connection:send( "You have successfully connected!\n" )
-            client.states[1] = { name = "Login", inbuf = {}, outbuf = {}, behaviour = require( "behaviours/login" ) }
-            client.state = client.states[1]
-            assert( client.state.behaviour.init( client ) )
          else
             connection:close()
          end
       end
-      coroutine.yield( EventQueue.default_tick * 4 ) -- every second should be fine
+      coroutine.yield( EventQueue.default_tick * 8 ) -- every two second should be fine
    end
 end
 
@@ -51,8 +46,18 @@ function S:new( port )
    server.socket:settimeout(0)
    server.connections = {}
    server.accepting = false
+   server.athread = coroutine.create( acceptNewConnection )
 
    return server;
+end
+
+function S:start()
+   self.accepting = true
+   return self.athread
+end
+
+function S:stop()
+   self.accepting = false
 end
 
 return S

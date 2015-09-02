@@ -94,7 +94,6 @@ function EQ.main()
 
       if( CEvent.execute_at <= EQ.time() ) then
          -- non-dead coroutine events should return a time at which to "requeue" in milliseconds
-         print( "Running " .. CEvent.name )
          local requeue_at
          if( not CEvent.args ) then
             _, requeue_at = assert( coroutine.resume( CEvent.routine ) )
