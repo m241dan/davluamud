@@ -14,20 +14,18 @@ package.cpath = "/home/korisd/davluamud/libs/?.so"
 EventQueue = require( "libs/eventqueue" )
 
 print( os.time() )
-print( EQ.time() )
+milliseconds = EventQueue.time()
+print( milliseconds )
+print( milliseconds % 1000 )
 
-ThreadManager = require( "libs/threadmanager" )
 MudServer = require( "libs/mudserver" )
 Client = require( "objects/client" )
 
 print( "Program starting.\n" )
 
 -- create threads
-server = MudServer.new( 6500 )
-server.accepting = true
 
 -- start the manager, which starts the program
-ThreadManager.run()
 
 -- gracefully exit?
 print( "Program exiting.\n" )
