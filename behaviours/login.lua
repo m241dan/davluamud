@@ -1,7 +1,7 @@
 local B = {}
 
-function B.init( client )
-   client.state.outbuf[1] = [[
+function B.init( client, state )
+   state.outbuf[1]:parse( [[
 
   _____                              _
  |  __ \                            (_)
@@ -13,7 +13,7 @@ function B.init( client )
                                |___/
 
                 "Remember that you will die."
-What is your name? ]]
+What is your name? ]] )
    return true -- so as not to fuck up the assert
 end
 

@@ -1,4 +1,6 @@
-require( "socket" )
+local socket = require( "socket" )
+
+local S = {}
 
 local function acceptNewConnection( server )
    while true do
@@ -15,7 +17,7 @@ local function acceptNewConnection( server )
             connection:close()
          end
       end
-      coroutine.yield()
+      coroutine.yield( EventQueue.default_tick * 4 ) -- every second should be fine
    end
 end
 
@@ -32,24 +34,16 @@ local function readFromClients( server )
             end
          end
       end
-      coroutine.yield()
+      coroutine.yield( EventQueue.default_tick ) -- every quarter of a second to read from clients should be fine, can be adjusted if it feels sluggish
    end
 end
 
-local function flushOutput( server )
-   while true do
-      for index, client in ipairs( server.connections ) do
-         for _, output in pairs( client.state.outbuf ) do
-            client.connection:send( output )
-         end
-         client.state.outbuf = {}
-      end
-      coroutine.yield()
-   end
-end
-
-local function new( port )
+function S:new( port )
    local server = {}
+
+   setmetatable( server, self )
+   self.__index = self;
+
    server.socket = assert( socket.tcp(), "could not allocate new tcp socket" )
    assert( server.socket:bind( "*", port ), "could not bind to port" )
    server.socket:listen()
@@ -58,12 +52,7 @@ local function new( port )
    server.connections = {}
    server.accepting = false
 
-   ThreadManager.addThread( 1, coroutine.create( acceptNewConnection ), nil, server )
-   ThreadManager.addThread( 2, coroutine.create( readFromClients ), nil, server )
-   ThreadManager.addThread( 3, coroutine.create( flushOutput ), nil, server )
    return server;
 end
 
-return {
-   new = new
-}
+return S

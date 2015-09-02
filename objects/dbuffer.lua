@@ -26,6 +26,7 @@ local function getsubstr_color( str, length, ecc ) -- ecc expected color count
 end
 
 function B:parse( str )
+   --simplify these into \r\n into one character, much easier to work with
    local str = str:gsub( '\r\n', '\n' )
    local str = str:gsub( '\n\r', '\n' )
    local i, c, aw, lastspace = 1, 0, self.width, 0
