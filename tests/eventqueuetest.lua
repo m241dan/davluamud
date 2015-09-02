@@ -12,9 +12,9 @@ b.execute_at = EventQueue.time() + 300
 c.name = "c"
 c.execute_at = EventQueue.time() + 200
 
+EventQueue.insert( c )
 EventQueue.insert( a )
 EventQueue.insert( b )
-EventQueue.insert( c )
 
 for i, e in ipairs( EventQueue.queue ) do
    print( i .. " " .. e.name )

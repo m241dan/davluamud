@@ -69,9 +69,9 @@ function EQ.insert( event )
    -- if there's nothing in the queue, it's the first, duh!
    if( not EQ.queue[1] ) then
       EQ.queue[1] = event
+   else
+      EQ.insertSort( event, math.floor( #EQ.queue / 2 ) )
    end
-   print( "doing an insert" )
-   EQ.insertSort( event, math.floor( #EQ.queue / 2 ) )
 end
 
 function EQ.main()
