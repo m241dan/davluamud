@@ -2,6 +2,9 @@ local Buffer = require( "objects/dbuffer" )
 
 local C = {}
 
+C.location = "objects/client"
+C.flush_rate = 1000 -- 1000 milliseconds or... one second :P if this feels sluggish, can easilly increase
+
 local function getClientIP( client )
    while client.addr == nil do
       client.addr, client.port, client.net = client.connection:getsockname()
@@ -43,29 +46,27 @@ function C:addState( state )
    return #self.states + 1
 end
 
-function C:setState( si )
-   if( type( si ) == "number" ) then
-      if( not self.states[si] ) then
+function C:setState( sori )
+   if( type( sori ) == "number" ) then
+      if( not self.states[sori] ) then
          error( "attempting to set client state to a nil index.", 2 )
       end
    else
-      if( getmetatable( si ) ~= C.state ) then
+      if( getmetatable( sori ) ~= C.state ) then
          error( "attemptingto set state using object with non-state metatable", 2 )
       end
       for i, s in ipairs( self.states ) do
-         if( si == s ) then
-            si = i
+         if( sori == s ) then
+            sori = i
             break
          end
       end
    end
 
-   self.current_state = self.states[si]
+   self.current_state = self.states[sori]
    return true
 end
 
 function 
-
-C.location = "objects/client"
 
 return C
