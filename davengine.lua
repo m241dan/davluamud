@@ -17,7 +17,7 @@ milliseconds = EventQueue.time()
 print( milliseconds )
 print( milliseconds % 1000 )
 
-MudServer = require( "libs/mudserver" )
+MudServer = require( "objects/server" )
 Client = require( "objects/client" )
 
 print( "Program starting.\n" )
