@@ -19,10 +19,14 @@ function EQ.event:new( thread )
 
    setmetatable( event, self )
    self.__index = self
-   event.routine = thread
-   event.execute_at = EQ.time()
+   self.routine = thread
+   self.execute_at = EQ.time()
 
    return event
+end
+
+function EQ.event:args( ... )
+   self.args = { ... }
 end
 
 --queue functions
