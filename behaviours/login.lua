@@ -1,4 +1,4 @@
-local EventQueue = require( libs/eventqueue" )
+local EventQueue = require( "libs/eventqueue" )
 local B = {}
 
 function B.init( state )
@@ -28,12 +28,15 @@ function B.output( state )
 end
 
 function B.interp( state, input )
+   while true do
+      coroutine.yield()
+   end
 end
 
 function B.msg( state, input )
    table.insert( state.outbuf, #state.outbuf + 1, input )
    if( not state.outbuf_event.is_queued ) then
-      state.outbuf_event.execute_at = EQ.time() + EQ.default_tick
+      state.outbuf_event.execute_at = EventQueue.time() + EventQueue.default_tick
       EventQueue.insert( state.outbuf_event )
    end
 end

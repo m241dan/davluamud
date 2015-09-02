@@ -1,6 +1,7 @@
 local EventQueue = require( "libs/eventqueue" )
 
 local C = {}
+C.state = {}
 
 ---------------------------------------------
 -- Client Constants and Globals            --
@@ -37,9 +38,12 @@ function C:new( connect )
    client.connection = connect
    client.connection:settimeout(0) -- don't block, you either have something or you don't!
    client.states = {}
+
+   -- get the client info in a non-blocking way using an event
    event = EventQueue.event:new( coroutine.create( getClientIP ) )
    event:args( client )
    EventQueue.insert( event )
+
    return client;
 end
 
@@ -83,11 +87,13 @@ function C.state:new( name, behaviour )
 
    state.clients = {}
    state.name = name
-   assert( state.behaviour = require( behaviour ) )
+   state.behaviour = assert( require( behaviour ) )
    state.inbuf = {}
    state.outbuf = {}
-   state.outbuf_event = EventQueue.event:new( coroutine.create( self.behaviour.output ) )
-   state.outbuf_event:args( self )
+   state.outbuf_event = EventQueue.event:new( coroutine.create( state.behaviour.output ) )
+   state.outbuf_event:args( state )
+
+   return state
 end
 
 function C.state:init()
@@ -100,6 +106,10 @@ function C.state:init()
    end
 
    assert( self.behaviour.init( self ) )
+end
+
+function C.state:msg( ... )
+   C.state.behaviour.msg( self, ... )
 end
 
 return C

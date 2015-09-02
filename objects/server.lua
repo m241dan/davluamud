@@ -17,7 +17,7 @@ local function acceptNewConnection( server )
             local starting_state = Client.state:new( "login", "behaviours/login" )
             new_client:addState( starting_state )
             new_client:setState( starting_state )
-            start_state:init()
+            starting_state:init()
          else
             connection:close()
          end
