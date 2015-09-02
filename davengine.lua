@@ -10,8 +10,8 @@
 -- boot mud server
 -- boot database
 -- boot game server(game logic)
-EventQueue = require( "libs/eventqueue" )
-MudServer = require( "objects/server" )
+local EventQueue = require( "libs/eventqueue" )
+local MudServer = require( "objects/server" )
 
 print( "Program starting.\n" )
 

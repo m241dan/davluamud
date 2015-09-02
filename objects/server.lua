@@ -1,5 +1,6 @@
 local socket = require( "socket" )
-
+local EventQueue = require( "libs/eventqueue" )
+local Client = require( "objects/client" )
 local S = {}
 
 ---------------------------------------------
@@ -12,7 +13,11 @@ local function acceptNewConnection( server )
       local connection, err = server.socket:accept()
       if( not err ) then
          if( server.accepting == true ) then
-            connection:send( "You have successfully connected!\n" )
+            local new_client = Client:new( connection )
+            local starting_state = Client.state:new( "login", "behaviours/login" )
+            new_client:addState( starting_state )
+            new_client:setState( starting_state )
+            start_state:init()
          else
             connection:close()
          end

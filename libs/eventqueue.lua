@@ -34,6 +34,7 @@ function EQ.event:new( thread )
    self.__index = self
    event.routine = thread
    event.execute_at = EQ.time()
+   event.is_queued = false
 
    return event
 end
@@ -94,6 +95,7 @@ function EQ.insert( event )
    else
       EQ.insertSort( event, math.floor( #EQ.queue / 2 ) )
    end
+   event.is_queued = true
 end
 
 -- eventqueuetest_two tests the run and main code
@@ -120,6 +122,7 @@ function EQ.main()
          table.remove( EQ.queue, 1 ) 
          if( coroutine.status( CEvent.routine ) == "dead" or type( requeue_at ) ~= "number" ) then
             print( "removing event with dead thread." )
+            CEvent.is_queued = false
          else
             CEvent.execute_at = EQ.time() + requeue_at -- requeue time will be current time in milliseconds + the millseconds returned by the yield
             EQ.insert( CEvent ) 

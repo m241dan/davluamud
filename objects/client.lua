@@ -1,4 +1,4 @@
-local Buffer = require( "objects/dbuffer" )
+local EventQueue = require( "libs/eventqueue" )
 
 local C = {}
 
@@ -45,6 +45,7 @@ end
 
 function C:addState( state )
    table.insert( self.states, #self.states + 1, state )
+   table.insert( state.clients, #state.clients + 1, self )
    return #self.states + 1
 end
 
@@ -80,12 +81,25 @@ function C.state:new( name, behaviour )
    setmetatable( state, self )
    self.__index = self
 
+   state.clients = {}
    state.name = name
-   state.behaviour = require( behaviour )
+   assert( state.behaviour = require( behaviour ) )
    state.inbuf = {}
-   state.outbuf = { Buffer:new( 70 ) }
-   assert( state.behaviour.init( client, state ) )
+   state.outbuf = {}
+   state.outbuf_event = EventQueue.event:new( coroutine.create( self.behaviour.output ) )
+   state.outbuf_event:args( self )
 end
 
+function C.state:init()
+   if( not self.clients[1] ) then
+      error( "cannot init a state with not client at index 1.", 2 )
+   end
+
+   if( not self.behaviour ) then
+      error( "cannot init a state that does not have a behaviour.", 2 )
+   end
+
+   assert( self.behaviour.init( self ) )
+end
 
 return C
