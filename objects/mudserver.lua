@@ -1,4 +1,4 @@
-local socket = require( "socket" )
+require( "socket" )
 
 local function acceptNewConnection( server )
    while true do

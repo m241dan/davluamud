@@ -1,3 +1,4 @@
+local socket = require( "socket" )
 package.cpath = "/home/korisd/davluamud/libs/?.so"
 local Time = require( "time" )
 -- .getMiliseconds()
@@ -19,8 +20,8 @@ function EQ.event:new( thread )
 
    setmetatable( event, self )
    self.__index = self
-   self.routine = thread
-   self.execute_at = EQ.time()
+   event.routine = thread
+   event.execute_at = EQ.time()
 
    return event
 end
@@ -38,6 +39,8 @@ end
 function EQ.time()
    return ( Time.getMiliseconds() * 1000 )
 end
+
+-- eventqueuetest_one tests the insert||insertSort code
 
 function EQ.insertSort( event, index )
    local next
@@ -76,9 +79,12 @@ function EQ.insert( event )
    end
 end
 
+-- eventqueuetest_two tests the run and main code
+
 function EQ.main()
 
    while EQ.running do
+      ::mainloop::
       if( not EQ.queue[1] ) then -- should never have an empty queue, but if we do, its time to end
          print( "Program Exiting, nothing in Queue." )
          return false
@@ -88,20 +94,24 @@ function EQ.main()
 
       if( CEvent.execute_at <= EQ.time() ) then
          -- non-dead coroutine events should return a time at which to "requeue" in milliseconds
-         local requeue_at = assert( coroutine.resume( CEvent.thread ) ) 
+         print( "Running " .. CEvent.name )
+         local requeue_at
+         if( not CEvent.args ) then
+            _, requeue_at = assert( coroutine.resume( CEvent.routine ) )
+         else
+            _, requeue_at = assert( coroutine.resume( CEvent.routine, table.unpack( CEvent.args ) ) )
+         end
          table.remove( EQ.queue, 1 ) 
-         if( coroutine.status( CEvent.thread ) == "dead" ) then
+         if( coroutine.status( CEvent.routine ) == "dead" or type( requeue_at ) ~= "number" ) then
             print( "removing event with dead thread." )
          else
             CEvent.execute_at = EQ.time() + requeue_at -- requeue time will be current time in milliseconds + the millseconds returned by the yield
             EQ.insert( CEvent ) 
          end
-
+         goto mainloop
       else
-         
+         socket.sleep( ( EQ.queue[1].execute_at - EQ.time() ) / 1000 )
       end
-      
-      
    end
 end 
 
